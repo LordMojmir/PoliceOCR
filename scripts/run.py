@@ -1,7 +1,7 @@
 from pdf_processor import PDFProcessor  # Import the PDFProcessor class from pdf_processor.py
 from eval import query_custom_gpt, convert_json_to_object, save_json_to_file, obj2excel
 
-def process_pdf_and_convert_to_excel(input_file: str, output_folder: str, json_file_path: str, excel_file_path: str):
+def process_pdf_and_convert_to_excel(input_file: str, output_folder: str):
     """
     Processes a PDF file, performs OCR, queries a custom GPT model,
     converts the output to a Python object, saves it as a JSON file,
@@ -9,8 +9,6 @@ def process_pdf_and_convert_to_excel(input_file: str, output_folder: str, json_f
 
     :param input_file: Path to the input PDF file.
     :param output_folder: Folder to save the OCR output.
-    :param json_file_path: Path to save the JSON file.
-    :param excel_file_path: Path to save the Excel file.
     """
     # Initialize PDF Processor
     pdf_processor = PDFProcessor()
@@ -26,15 +24,14 @@ def process_pdf_and_convert_to_excel(input_file: str, output_folder: str, json_f
     python_object = convert_json_to_object(json_output)
 
     # Save Python object to JSON file
-    save_json_to_file(python_object, json_file_path)
+    save_json_to_file(python_object, output_folder+"result.json")
 
     # Convert Python object to Excel file
-    obj2excel([python_object, python_object], excel_file_path)
+    obj2excel([python_object], output_folder+"TheMachine.xlsx")
 
 # Example usage
-input_file = '../data/3-Batch/3_Doc.pdf'
-output_folder = '../data/3-Batch/3_Doc_output/'
-json_file_path = './json/test.json'
-excel_file_path = './excel/Test.xlsx'
+input_file = '../data/2-Batch/2_Doc.pdf'
+output_folder = '../data/2-Batch/2_Doc_output/'
 
-process_pdf_and_convert_to_excel(input_file, output_folder, json_file_path, excel_file_path)
+
+process_pdf_and_convert_to_excel(input_file, output_folder)
