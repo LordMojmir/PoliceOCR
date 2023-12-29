@@ -78,9 +78,9 @@ class PDFProcessor:
         ocr_output = self.read_in_new_penalty(input_pdf_doc, output_folder)
         return ocr_output
 
-if __name__ == '__main__':
-    pdf_processor = PDFProcessor()
-    pdf_processor.test_cuda()
-    output_folder = '../data/1-Batch/2_Doc_output/'
-    ocr_output = pdf_processor.read_in_new_penalty('../data/1-Batch/2_Doc.pdf', output_folder)
-    # Now you can use pdf_processor to call other functions as needed.
+# if __name__ == '__main__':
+#     pdf_processor = PDFProcessor()
+#     pdf_processor.test_cuda()
+#     output_folder = '../data/1-Batch/2_Doc_output/'
+#     ocr_output = pdf_processor.read_in_new_penalty('../data/1-Batch/2_Doc.pdf', output_folder)
+#     # Now you can use pdf_processor to call other functions as needed.
