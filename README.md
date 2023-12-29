@@ -20,8 +20,8 @@ pip install pandas openpyxl argparse json easyocr matplotlib openai pdf2img
 
 The script can be executed from the command line. It accepts two optional named arguments:
 
-- \`--input_file\`: The path to the input PDF file that you want to process.
-- \`--output_folder\`: The folder path where the OCR output, JSON, and Excel files will be saved.
+- `--input_file\`: The path to the input PDF file that you want to process.
+- `--output_folder\`: The folder path where the OCR output, JSON, and Excel files will be saved.
 
 ### Command Line Syntax
 
