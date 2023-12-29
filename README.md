@@ -5,17 +5,16 @@ This script is designed to process a PDF file using OCR (Optical Character Recog
 ## Requirements
 
 - Python 3.11
-- Required Python packages: \`argparse\`, \`pandas\`, \`openpyxl\`, \`json\`, pymupdf, easyOCR \`pdf_processor\` and \`eval\` modules.
+- Required Python packages: `pymupdf`, `easyOCR`, `torch`, `argparse`, `pandas`, `openpyxl`, `json`, `pdf_processor` and `eval` modules.
 - A custom GPT model setup for querying (handled by \`query_custom_gpt\` function).
 
 ## Installation
 
 Before running the script, make sure to install the required Python packages using pip:
 
-\`\`\`bash
+``` bash
 pip install pandas openpyxl argparse json easyocr matplotlib openai pdf2img
-# Install other dependencies as required by your specific processing modules.
-\`\`\`
+```
 
 ## Usage
 
@@ -26,37 +25,37 @@ The script can be executed from the command line. It accepts two optional named 
 
 ### Command Line Syntax
 
-\`\`\`bash
+``` bash
 python run.py --input_file 'path_to_input.pdf' --output_folder 'path_to_output_folder/'
-\`\`\`
+```
+
 
 ### Examples
 
 Running the script with default values (defined inside the script):
 
-\`\`\`bash
+``` bash
 python run.py
-\`\`\`
+``` 
 
 Running the script with custom input file and output folder:
 
-\`\`\`bash
+``` bash
 python run.py --input_file '../data/new_batch/new_doc.pdf' --output_folder '../data/new_batch/output/'
-\`\`\`
-
+``` 
 ### Output
 
 The script will produce three output files:
-1. \`page{i}.png\`: All the pdf pages converted into single png files
-2. \`output_ocr.txt\`: An txt file with the OCR-Output
-3. \`result.json\`: Contains the JSON output from the custom GPT model.
-4. \`TheMachine.xlsx\`: An Excel file with the data structured in a tabular form.
+1. `page{i}.png`: All the pdf pages converted into single png files
+2. `output_ocr.txt`: An txt file with the OCR-Output
+3. `result.json`: Contains the JSON output from the custom GPT model.
+4. `TheMachine.xlsx`: An Excel file with the data structured in a tabular form.
 
-Both files will be saved in the directory specified by \`--output_folder\`.
+Both files will be saved in the directory specified by `--output_folder`.
 
 ## Notes
 
-- Ensure the \`pdf_processor\` and \`eval\` modules are correctly configured and accessible in your script's directory.
-- The script assumes that \`PDFProcessor\` has methods \`test_cuda\` and \`read_in_new_penalty\` for processing the PDF and that \`eval\` contains the necessary functions for processing the output.
+- Ensure the `pdf_processor` and `eval` modules are correctly configured and accessible in your script's directory.
+- The script assumes that `PDFProcessor` has methods `test_cuda` and `read_in_new_penalty` for processing the PDF and that `eval` contains the necessary functions for processing the output.
 
-For any issues or further customization, refer to the documentation provided for the \`pdf_processor\` and \`eval\` modules, or contact the support team.
+For any issues or further customization, refer to the documentation provided for the `pdf_processor` and `eval` modules, or contact the support team.
