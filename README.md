@@ -13,7 +13,7 @@ This script is designed to process a PDF file using OCR (Optical Character Recog
 Before running the script, make sure to install the required Python packages using pip:
 
 ``` bash
-pip install pandas openpyxl argparse json easyocr matplotlib openai pdf2img
+pip install pandas openpyxl argparse easyocr matplotlib openai pdf2image
 ```
 
 ## Usage
