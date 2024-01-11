@@ -13,8 +13,16 @@ This script is designed to process a PDF file using OCR (Optical Character Recog
 Before running the script, make sure to install the required Python packages using pip:
 
 ``` bash
-pip install pandas openpyxl argparse easyocr matplotlib openai pdf2image pymupdf python-dotenv opencv-python torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install pandas openpyxl argparse easyocr matplotlib openai pdf2image pymupdf python-dotenv opencv-python 
 ```
+
+CUDA
+
+``` bash
+pip3 install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+```
+
+
 
 ## Usage
 
