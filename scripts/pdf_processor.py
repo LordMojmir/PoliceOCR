@@ -10,6 +10,7 @@ import json
 import torch
 from pdf2image import convert_from_path
 from typing import List, Optional
+from pyteseractOCR import read_txt_from_image
 
 class PDFProcessor:
     def __init__(self):
@@ -24,6 +25,24 @@ class PDFProcessor:
         else:
             print("CUDA is not available.")
             return False
+
+
+    def create_output_folder_for_input_folder(self, file_path: str):
+
+        # Extract the directory from the file path
+        directory = os.path.dirname(file_path)
+
+        # Construct the path for the output folder
+        output_folder = os.path.join(directory, 'output')
+
+        # Check if the output folder already exists
+        if not os.path.exists(output_folder):
+            # Create the output folder
+            os.makedirs(output_folder)
+            # print(f"Output folder created at: {output_folder}")
+        output_folder += r'\''
+
+        return output_folder
 
     def pdf_to_img(self, pdf_path: str, output_folder: str, only_create: bool = True) -> Optional[List[Image.Image]]:
         try:
@@ -59,18 +78,21 @@ class PDFProcessor:
         if not os.path.exists(folder_path):
             os.makedirs(folder_path)
         file_path = os.path.join(folder_path, filename)
-        with open(file_path, 'w') as file:
+        with open(file_path, 'w', encoding='utf-8') as file:  # Specify 'utf-8' encoding
             file.write(content)
 
     def read_in_new_penalty(self, pdf_path: str, output_folder_str: str):
         images = self.pdf_to_img(pdf_path=pdf_path, output_folder=output_folder_str, only_create=False)
-        result: str = ""
+        resultEasyOCR: str = ""
+        resultPyteseract: str = ""
         print(f"File has {len(images)} pages")
         for i, image in enumerate(images):
-            result += self.extract_txt_from_reader_output(self.read_txt_from_image(image))
+            resultEasyOCR += self.extract_txt_from_reader_output(self.read_txt_from_image(image))
+            resultPyteseract += read_txt_from_image(image)
             print(f"currently reading page {i}.")
+        result = 'First OCR: ' + resultPyteseract + 'Second OCR: ' +resultEasyOCR
         self.save_string_to_txt(result, "output_ocr.txt", output_folder_str)
-        print(result)
+        print(resultEasyOCR)
         return result
 
     def read_in_data(self, input_pdf_doc: str, output_folder: str) -> str:

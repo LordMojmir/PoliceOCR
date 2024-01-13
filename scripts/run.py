@@ -15,6 +15,11 @@ def process_pdf_and_convert_to_excel(input_file: str, output_folder: str):
     pdf_processor = PDFProcessor()
     pdf_processor.test_cuda()
 
+    # Create output_folder
+    if output_folder == '':
+        output_folder = pdf_processor.create_output_folder_for_input_folder(input_file)
+        print(f"Out: {output_folder}")
+
     # Process PDF and Perform OCR
     ocr_output = pdf_processor.read_in_new_penalty(input_file, output_folder)
 
@@ -31,10 +36,11 @@ def process_pdf_and_convert_to_excel(input_file: str, output_folder: str):
     obj2excel([python_object], output_folder + "TheMachine.xlsx")
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description="Process a PDF and output to Excel")
-    parser.add_argument("--input_file", help="Path to the input PDF file", default='../data/2-Batch/2_Doc.pdf')
-    parser.add_argument("--output_folder", help="Folder to save the OCR output and result files", default='../data/2-Batch/2_Doc_output/')
-
-    args = parser.parse_args()
-
-    process_pdf_and_convert_to_excel(args.input_file, args.output_folder)
+    # parser = argparse.ArgumentParser(description="Process a PDF and output to Excel")
+    # parser.add_argument("--input_file", help="Path to the input PDF file", default='../data/2-Batch/2_Doc.pdf')
+    # parser.add_argument("--output_folder", help="Folder to save the OCR output and result files", default='../data/2-Batch/2_Doc_output/')
+    #
+    # args = parser.parse_args()
+    #
+    # process_pdf_and_convert_to_excel(args.input_file, args.output_folder)
+    process_pdf_and_convert_to_excel('../data/5-Batch/1_Doc_2.2.pdf', '../data/5-Batch/1_Doc_output/')

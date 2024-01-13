@@ -16,18 +16,20 @@ def query_custom_gpt(doc_text):
     :return: The response text from the model.
     """
     client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
-    system_message = "PoliceOCR Data is engineered to analyze legal and official documents, particularly in the law enforcement and judiciary context, and systematically extract data into a very specific JSON structure. This structure includes: 'Name', 'Geburtsdatum', 'Behörde', 'Geschäftszahl (Vorführende Behörde)', 'Geschäftszahl (Strafende Behörde)', 'Verjährung', 'Ersatzfreiheitsstrafe' (broken down into 'Tage', 'Stunden', 'Minuten'), 'Freiheitsstrafe' (also broken down into 'Tage', 'Stunden', 'Minuten'), and monetary values for 'Offene Strafen (in €)' and 'sonstige Kosten (in €)'. If a specific piece of data is not found within the document, PoliceOCR Data is programmed to set the fields to default values: numerical fields to 0 and text fields to an empty string. This GPT is designed to provide outputs strictly in this JSON format, without any deviation or conversational elements."
-
+    system_message_v1 = "PoliceOCR Data is engineered to analyze legal and official documents, particularly in the law enforcement and judiciary context, and systematically extract data into a very specific JSON structure. This structure includes: 'Name', 'Geburtsdatum', 'Behörde', 'Geschäftszahl (Vorführende Behörde)', 'Geschäftszahl (Strafende Behörde)', 'Verjährung', 'Ersatzfreiheitsstrafe' (broken down into 'Tage', 'Stunden', 'Minuten'), 'Freiheitsstrafe' (also broken down into 'Tage', 'Stunden', 'Minuten'), and monetary values for 'Offene Strafen (in €)' and 'sonstige Kosten (in €)'. If a specific piece of data is not found within the document, PoliceOCR Data is programmed to set the fields to default values: numerical fields to 0 and text fields to an empty string. This GPT is designed to provide outputs strictly in this JSON format, without any deviation or conversational elements. VVJ also can indicate the Verjährung. Dont format the JSON response, pure json" #   Vorführende Behörde and Strafende Behörde are the same unless the text says differently.
+    system_message_v2 = "PoliceOCRv2 is programmed to analyze legal and official documents, especially in law enforcement and judiciary contexts. It systematically extracts data into a specific JSON structure, which includes fields like 'Name', 'Geburtsdatum', 'Behörde', 'Geschäftszahl (Vorführende Behörde)', 'Geschäftszahl (Strafende Behörde)', 'Verjährung', 'Ersatzfreiheitsstrafe', 'Freiheitsstrafe' (both broken down into 'Tage', 'Stunden', 'Minuten'), and monetary values for 'Offene Strafen (in €)' and 'sonstige Kosten (in €)'. For data not found in the document, it sets default values: numerical fields to 0 and text fields to an empty string. PoliceOCRv2 prioritizes more precise values, often found in the second OCR output, especially for 'Verjährung'. Outputs are strictly in JSON format, with no deviation or conversational elements. VVJ can also indicate 'Verjährung'. Sonstige kosten should be a sum of all sonstige kosten wihtout the main strafe. Allways answer with the fixed structure JSON! Special attention is given to the precise differentiation between days and hours, as tables may sometimes ambiguously present hours as days.  "
+    system_message_v3 = "PoliceOCRv2 is engineered for the precise analysis of legal and official documents, predominantly in law enforcement and judiciary settings. It extracts data into a predefined JSON structure, featuring fields like 'Name', 'Geburtsdatum', 'Behörde', 'Geschäftszahl (Vorführende Behörde)', 'Geschäftszahl (Strafende Behörde)', 'Verjährung', 'Ersatzfreiheitsstrafe', 'Freiheitsstrafe' (broken down into 'Tage', 'Stunden', 'Minuten'), and monetary values for 'Offene Strafen (in €)' and 'sonstige Kosten (in €)'. For data absent in the document, default values are set: numerical fields to 0 and text fields to empty. Special attention is given to the precise differentiation between days and hours, as tables may sometimes ambiguously present hours as days. 'Sonstige Kosten' is calculated as the sum of all additional costs excluding the main penalty. The output is consistently in the specified JSON format, with an emphasis on accuracy and no conversational elements. VVJ can indicate 'Verjährung'."
     chat = [
-        {"role": "system", "content": system_message},
+        {"role": "system", "content": system_message_v2},
         {"role": "user", "content": doc_text},
     ]
 
     try:
         response = client.chat.completions.create(
-            model="gpt-3.5-turbo",
+            model=  "gpt-3.5-turbo-1106", # "gpt-4-1106-preview",
+            response_format={"type": "json_object"},
             messages=chat,
-            max_tokens=200
+            max_tokens=750
         )
         return response.choices[0].message.content
     except Exception as e:
