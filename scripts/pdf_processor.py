@@ -44,17 +44,17 @@ class PDFProcessor:
 
         return output_folder
 
-    def pdf_to_img(self, pdf_path: str, output_folder: str, only_create: bool = True) -> Optional[List[Image.Image]]:
+    def pdf_to_img(self, pdf_path: str, output_folder: str, create_png: bool = True) -> Optional[List[Image.Image]]:
         try:
             os.makedirs(output_folder, exist_ok=True)
             images = convert_from_path(pdf_path, poppler_path=self.poppler_path)
 
-            for i, image in enumerate(images):
-                output_file = os.path.join(output_folder, f'page_{i + 1}.png')
-                image.save(output_file, 'PNG')
 
-            if only_create:
-                return None
+            if create_png:
+                for i, image in enumerate(images):
+                    output_file = os.path.join(output_folder, f'page_{i + 1}.png')
+                    image.save(output_file, 'PNG')
+
 
             return images
         except Exception as e:
@@ -81,8 +81,8 @@ class PDFProcessor:
         with open(file_path, 'w', encoding='utf-8') as file:  # Specify 'utf-8' encoding
             file.write(content)
 
-    def read_in_new_penalty(self, pdf_path: str, output_folder_str: str):
-        images = self.pdf_to_img(pdf_path=pdf_path, output_folder=output_folder_str, only_create=False)
+    def read_in_new_penalty(self, pdf_path: str, output_folder_str: str, create_png: bool = False):
+        images = self.pdf_to_img(pdf_path=pdf_path, output_folder=output_folder_str, create_png=create_png)
         resultEasyOCR: str = ""
         resultPyteseract: str = ""
         print(f"File has {len(images)} pages")
