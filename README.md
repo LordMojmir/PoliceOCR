@@ -5,7 +5,7 @@ This script is designed to process a PDF file using OCR (Optical Character Recog
 ## Requirements
 
 - Python 3.11
-- Required Python packages: `pymupdf`, `easyOCR`, `torch`, `argparse`, `pandas`, `openpyxl`, `json`, `pdf_processor`, `pytesseract`, `pymupdf` and `eval` modules. 
+- Required Python packages: `pymupdf`, `easyOCR`, `torch`, `argparse`, `pandas`, `openpyxl`, `json`, `pdf_processor`, `pytesseract`, `pymupdf`, `thefuzz` and `eval` modules. 
 - A custom GPT model setup for querying (handled by \`query_custom_gpt\` function).
 
 ## Installation
@@ -13,7 +13,7 @@ This script is designed to process a PDF file using OCR (Optical Character Recog
 Before running the script, make sure to install the required Python packages using pip:
 
 ``` bash
-pip install pandas openpyxl argparse easyocr matplotlib openai pdf2image pymupdf python-dotenv opencv-python pytesseract
+pip install pandas openpyxl argparse easyocr matplotlib openai pdf2image pymupdf python-dotenv opencv-python pytesseract thefuzz
 ```
 
 CUDA
