@@ -28,7 +28,7 @@ def process_pdf_and_convert_to_excel(input_file: str, output_folder: str):
     clean_ocr_output, name, bearbeiterIn, birthdate = making_OCR_gdpr_conform(ocr_output)
 
     # Query custom GPT model
-    json_output = query_custom_gpt(clean_ocr_output)
+    json_output = query_custom_gpt(clean_ocr_output, GPT4=False)
 
     # Convert JSON output to Python object
     python_object = convert_json_to_object(json_output)
@@ -50,7 +50,7 @@ if __name__ == "__main__":
 
 
     def single_doc():
-        process_pdf_and_convert_to_excel('../data/5-Batch/4_Doc_3.2.pdf', '../data/5-Batch/4_Doc_output/')
+        process_pdf_and_convert_to_excel('../data/6-Batch/9_Doc.pdf', '../data/6-Batch/9_Doc_output/')
 
 
     def multiple_doc():
