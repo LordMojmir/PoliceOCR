@@ -20,7 +20,7 @@ def making_OCR_gdpr_conform(ocr_output: str) -> Tuple[str, str, str, str]:
     words = second_String.split()
 
     def is_potential_name(word, next_word):
-        non_name_phrases = {"Stadt", "Gemeinde", "Magistrat", "Wien", "Tel", "Fax", "FAX", "Fax:", "Delikt", "LPD", "BearbeiterIn", "Herr", "Frau"}
+        non_name_phrases = {"Stadt", "Gemeinde", "Magistrat", "Wien", "Tel", "Fax", "FAX", "Fax:", "Delikt", "LPD", "BearbeiterIn", "Herr", "Frau", "ADir", "RegRat", "AAss", "Fachoberinspektorin"}
         if word in non_name_phrases or next_word in non_name_phrases:
             return False
         return word[0].isupper() and len(word) > 2 and next_word[0].isupper()
