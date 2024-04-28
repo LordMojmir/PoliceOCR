@@ -1,11 +1,12 @@
 import argparse
+
 from pdf_processor import PDFProcessor  # Import the PDFProcessor class from pdf_processor.py
 from eval import query_custom_gpt, convert_json_to_object, save_json_to_file, obj2excel, append_json_to_file, correct_python_obj
 from gdpr_conform import making_OCR_gdpr_conform
 from tools_file_processing import json2excel
 
 
-def process_pdf_and_convert_to_excel(input_file: str, output_folder: str):
+def process_pdf_and_convert_to_excel(input_file: str, output_folder: str, openai_api_key: str = None):
     """
     Processes a PDF file, performs OCR, queries a custom GPT model,
     converts the output to a Python object, saves it as a JSON file,
@@ -28,8 +29,11 @@ def process_pdf_and_convert_to_excel(input_file: str, output_folder: str):
     clean_ocr_output, name, bearbeiterIn, birthdate = making_OCR_gdpr_conform(ocr_output)
 
     # Query custom GPT model
-    json_output = query_custom_gpt(clean_ocr_output, GPT4=False)
-
+    try:
+        json_output = query_custom_gpt(clean_ocr_output, openai_api_key=openai_api_key, GPT4=False)
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        return
     # Convert JSON output to Python object
     python_object = convert_json_to_object(json_output)
     enhanced_obj = correct_python_obj(python_object, input_file, name, birthdate, True)
@@ -49,12 +53,13 @@ if __name__ == "__main__":
     # process_pdf_and_convert_to_excel(args.input_file, args.output_folder)
 
 
-    def single_doc():
-        process_pdf_and_convert_to_excel('../data/6-Batch/9_Doc.pdf', '../data/6-Batch/9_Doc_output/')
+    def single_doc(batch_num: int, doc_num: int):
+        process_pdf_and_convert_to_excel(input_file=f'../data/{batch_num}-Batch/{doc_num}_Doc.pdf',
+                                         output_folder=f'../data/{batch_num}-Batch/{doc_num}_Doc_output/')
 
 
     def multiple_doc():
-        input_files = ['../data/5-Batch/1_Doc_2.2.pdf', '../data/1-Batch/1_Doc.pdf']
+        input_files = ['../data/5-Batch/1_Doc_2.2.pdf', '../data/1-Batch/1_Doc.pdf'] 
         common_output_folder = '../data/common_output_folder/'
 
         for input_file in input_files:
@@ -67,14 +72,7 @@ if __name__ == "__main__":
         excel_saved = json2excel(file_path, common_output_folder + "TheMachine.xlsx")
         print(f"Json saved to excel {excel_saved}")
 
-
-    single_doc()
-#
-# from typing import Tuple
-#
-# def making_OCR_gdpr_conform(ocr_output: str) -> Tuple[str, str]:
-#     clean_ocr_output = ocr_output
-#     name = "Paul Wenth"
-#     return clean_ocr_output, name
+    # for i in range(10):
+    single_doc(batch_num = 6, doc_num = 9)
 
 

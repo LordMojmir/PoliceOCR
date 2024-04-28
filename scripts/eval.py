@@ -7,7 +7,7 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-def query_custom_gpt(doc_text, GPT4: bool = False):
+def query_custom_gpt(doc_text, openai_api_key: str, GPT4: bool = False):
     """
     Sends a prompt to the GPT model and returns the response.
 
@@ -15,7 +15,10 @@ def query_custom_gpt(doc_text, GPT4: bool = False):
     :param system_message: The system instruction for the GPT model.
     :return: The response text from the model.
     """
-    client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    if openai_api_key is None:
+        client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
+    else:
+        client = OpenAI(api_key=openai_api_key)
 
     system_message_v1 = "PoliceOCR Data is engineered to analyze legal and official documents, particularly in the law enforcement and judiciary context, and systematically extract data into a very specific JSON structure. This structure includes: 'Name', 'Geburtsdatum', 'Behörde', 'Geschäftszahl (Vorführende Behörde)', 'Geschäftszahl (Strafende Behörde)', 'Verjährung', 'Ersatzfreiheitsstrafe' (broken down into 'Tage', 'Stunden', 'Minuten'), 'Freiheitsstrafe' (also broken down into 'Tage', 'Stunden', 'Minuten'), and monetary values for 'Offene Strafen (in €)' and 'Sonstige Kosten (in €)'. If a specific piece of data is not found within the document, PoliceOCR Data is programmed to set the fields to default values: numerical fields to 0 and text fields to an empty string. This GPT is designed to provide outputs strictly in this JSON format, without any deviation or conversational elements. VVJ also can indicate the Verjährung. Dont format the JSON response, pure json" #   Vorführende Behörde and Strafende Behörde are the same unless the text says differently.
     system_message_v2 = "PoliceOCRv2 is programmed to analyze legal and official documents, especially in law enforcement and judiciary contexts. It systematically extracts data into a specific JSON structure, which includes fields like 'Name', 'Geburtsdatum', 'Behörde', 'Geschäftszahl (Vorführende Behörde)', 'Geschäftszahl (Strafende Behörde)', 'Verjährung', 'Ersatzfreiheitsstrafe', 'Freiheitsstrafe' (both broken down into 'Tage', 'Stunden', 'Minuten'), and monetary values for 'Offene Strafen (in €)' and 'Sonstige Kosten (in €)'. For data not found in the document, it sets default values: numerical fields to 0 and text fields to an empty string. PoliceOCRv2 prioritizes more precise values, often found in the second OCR output, especially for 'Verjährung'. Outputs are strictly in JSON format, with no deviation or conversational elements. VVJ can also indicate 'Verjährung'. Sonstige kosten should be a sum of all Sonstige kosten wihtout the main penalty. Allways answer with the fixed structure JSON! " #  Special attention is given to the precise differentiation between days and hours, as tables may sometimes ambiguously present hours as days.
@@ -26,9 +29,9 @@ def query_custom_gpt(doc_text, GPT4: bool = False):
     ]
 
     if GPT4:
-        model = "gpt-4-1106-preview"
+        model = "gpt-4-turbo-2024-04-09	"
     else:
-        model = "gpt-3.5-turbo-1106"
+        model = "gpt-3.5-turbo-0125"
 
     try:
         response = client.chat.completions.create(
@@ -40,7 +43,7 @@ def query_custom_gpt(doc_text, GPT4: bool = False):
         )
         return response.choices[0].message.content
     except Exception as e:
-        return str(e)
+        return e
 
 def convert_json_to_object(json_string):
     """
@@ -150,3 +153,7 @@ def correct_python_obj(python_object, input_file: str, name: str, birthday: str,
 # print(json_output)
 # python_object = convert_json_to_object(json_output)
 # print(python_object)
+
+if __name__ == '__main__':
+    test_obj = {'Name': '', 'Geburtsdatum': '15.11.1979', 'Behörde': 'LPD WIEN', 'Geschäftszahl (Vorführende Behörde)': 'VStV/920301900060/2020', 'Geschäftszahl (Strafende Behörde)': '', 'Verjährung': '17.02.2024', 'Ersatzfreiheitsstrafe': {'Tage': 1, 'Stunden': 0, 'Minuten': 0}, 'Freiheitsstrafe': {'Tage': 0, 'Stunden': 0, 'Minuten': 0}, 'Offene Strafen (in €)': 120.0, 'Sonstige Kosten (in €)': 125.0}
+    print(correct_python_obj(test_obj, "test.pdf", "Max Mustermann", "15.11.1979", True))

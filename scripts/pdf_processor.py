@@ -85,7 +85,10 @@ class PDFProcessor:
         images = self.pdf_to_img(pdf_path=pdf_path, output_folder=output_folder_str, create_png=create_png)
         resultEasyOCR: str = ""
         resultPyteseract: str = ""
-        print(f"File has {len(images)} pages")
+        try:
+            print(f"File has {len(images)} pages")
+        except:
+            print("Something not right")
         for i, image in enumerate(images):
             resultEasyOCR += self.extract_txt_from_reader_output(self.read_txt_from_image(image))
             resultPyteseract += read_txt_from_image(image)

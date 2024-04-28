@@ -20,7 +20,8 @@ def making_OCR_gdpr_conform(ocr_output: str) -> Tuple[str, str, str, str]:
     words = second_String.split()
 
     def is_potential_name(word, next_word):
-        non_name_phrases = {"Stadt", "Gemeinde", "Magistrat", "Wien", "Tel", "Fax", "FAX", "Fax:", "Delikt", "LPD", "BearbeiterIn", "Herr", "Frau", "ADir", "RegRat", "AAss", "Fachoberinspektorin"}
+        non_name_phrases = {"Stadt", "Gemeinde", "Magistrat", "Wien", "Tel", "Fax", "FAX", "Fax:", "Delikt", "LPD",
+                            "BearbeiterIn", "Herr", "Frau", "ADir", "RegRat", "AAss", "Fachoberinspektorin"}
         if word in non_name_phrases or next_word in non_name_phrases:
             return False
         return word[0].isupper() and len(word) > 2 and next_word[0].isupper()
@@ -52,14 +53,18 @@ def making_OCR_gdpr_conform(ocr_output: str) -> Tuple[str, str, str, str]:
             similarity_scores = [fuzz.ratio(word, variation) for variation in name_variations]
             max_similarity = max(similarity_scores)
             if max_similarity >= 80:
-                #words[i] = "name"
-                for j in range(i + 1, len(words) - 1):
-                    if(words[j] == "BearbeiterIn"):
-                        j = j+3
+                # words[i] = "name"
+                j = i + 1
+                while j < len(words) - 1:
+                    if words[j] == "BearbeiterIn":
+                        j += 2  # Skip the next three words
+                        continue
                     if is_potential_name(words[j], words[j + 1]):
                         name = f"{words[j]} {words[j + 1]}"
                         break
-                if name:
+                    j += 1  # Increment j for the next iteration
+
+            if name:
                     break
 
     bearbeiterIn_pattern = r'(BearbeiterIn)\s+([A-Z\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF][a-zA-Z\u00E4\u00F6\u00FC\u00DF.]+)\s+([A-Z\u00C4\u00D6\u00DC\u00E4\u00F6\u00FC\u00DF][a-zA-Z\u00E4\u00F6\u00FC\u00DF.]+)'
@@ -67,12 +72,16 @@ def making_OCR_gdpr_conform(ocr_output: str) -> Tuple[str, str, str, str]:
 
     bearbeiterIn_match = re.search(bearbeiterIn_pattern, true_ocr_output2)
 
-    if bearbeiterIn_match:
-        if(is_not_Bearbeiterin(bearbeiterIn_match.group(3))):
-            bealastname = bearbeiterIn_match.group(3)
-        else:
-            bealastname = ""
-    bearbeiterIn = f"{bearbeiterIn_match.group(2)} {bealastname}"
+    try:
+        if bearbeiterIn_match:
+            if (is_not_Bearbeiterin(bearbeiterIn_match.group(3))):
+                bealastname = bearbeiterIn_match.group(3)
+            else:
+                bealastname = ""
+        bearbeiterIn = f"{bearbeiterIn_match.group(2)} {bealastname}"
+    except:
+        bearbeiterIn = ""
+        print("BearbeiterIn nicht erkannt")
 
     birthdate_matches = re.findall(date_pattern, ocr_output)
     if birthdate_matches:
@@ -122,5 +131,4 @@ def making_OCR_gdpr_conform(ocr_output: str) -> Tuple[str, str, str, str]:
 
     finalName = correct_name_order(name).replace(",", "").replace(";", "")
 
-    return clean_ocr_output, finalName , bearbeiterIn.replace(",", "") ,birthdate
-
+    return clean_ocr_output, finalName, bearbeiterIn.replace(",", ""), birthdate
